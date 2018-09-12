@@ -1,0 +1,57 @@
+apply plugin: "maven"
+apply from: "$project.rootDir/local_control.gradle"
+
+// 指定编码
+//tasks.withType(JavaCompile) {
+//    options.encoding = "UTF-8"
+//}
+
+// 打包源码
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+//task javadoc(type: Javadoc) {
+//    failOnError  false
+//    source = android.sourceSets.main.java.sourceFiles
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += configurations.compile
+//}
+
+// 制作文档(Javadoc)
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+
+artifacts {
+    archives sourcesJar
+    //archives javadocJar
+}
+
+def localUrl = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+def uploadUrl = POM_UP_MODE == "2" ? localUrl : (POM_UP_MODE == "0" ? POM_URL : POM_URL_DEV)
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(uploadUrl)){
+                //配置账号密码
+                authentication(userName: POM_USER_NAME, password: POM_USER_PASS)
+            }
+            pom.version = VERSION_NAME
+            pom.groupId = GROUP
+            pom.artifactId = POM_ARTIFACT_ID
+            /*android.libraryVariants.all { variant ->
+                def isRelease = variant.buildType.name == "release"
+
+                //只上传release的，如果没有多个flavor的去掉isFlavor的判断
+                if(isRelease){
+                    pom.version = VERSION_NAME
+                    pom.groupId = GROUP
+                    pom.artifactId = POM_ARTIFACT_ID
+                }
+            }*/
+        }
+    }
+}

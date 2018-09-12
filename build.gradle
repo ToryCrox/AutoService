@@ -1,5 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+apply from: "local_control.gradle"
 buildscript {
     
     repositories {
@@ -19,7 +19,24 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenLocal()
+        maven {
+            credentials {
+                username POM_USER_NAME
+                password POM_USER_PASS
+            }
+            url POM_URL_DEV
+        }
+        maven {
+            credentials {
+                username POM_USER_NAME
+                password POM_USER_PASS
+            }
+            url POM_URL
+        }
     }
+
+
 }
 
 task clean(type: Delete) {

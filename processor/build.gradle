@@ -2,8 +2,11 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':api')
+    implementation "$GROUP:api:$VERSION_NAME"
+    //implementation project(':api')
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+apply from: "$project.rootDir/maven_upload.gradle"
